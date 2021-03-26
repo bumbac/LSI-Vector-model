@@ -5,7 +5,7 @@ from vector import vector
 if __name__ == '__main__':
     path = 'articles/'
     files = os.listdir(path)
-    save_dir = 'matrices'
+    save_dir = 'matrixes'
     cnt = 0
     for f in files:
         # testing break
