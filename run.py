@@ -8,6 +8,7 @@ if __name__ == '__main__':
     save_dir = 'matrices'
     cnt = 0
     for f in files:
+        # testing break
         if cnt > 3:
             break
         cnt += 1
@@ -18,8 +19,5 @@ if __name__ == '__main__':
         clean_words = tk.stemmatize(clean_tokens)
 
         save_path = save_dir + 'm_' + f
-        tmatrix = vector.make_tmatrix(clean_words)
+        tmatrix = vector.make_tmatrix(clean_words, save_path)
         print(tmatrix)
-        # save_f = open(save_path, 'w')
-        # save_f.write(tmatrix)
-        # save_f.close()
