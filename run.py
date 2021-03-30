@@ -22,6 +22,7 @@ if __name__ == '__main__':
         clean_words = tk.stemmatize(clean_tokens)
 
         save_path = None # save_dir + 'm_' + f
+        # creates vector of terms with relative weight to this document
         docterm = vector.make_docterm_vector(clean_words, save_path, id=cnt)
         docterm_list.append(docterm)
         unique_terms.update(docterm.keys())
