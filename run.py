@@ -7,6 +7,9 @@ if __name__ == '__main__':
     files = os.listdir(path)
     save_dir = 'matrixes'
     cnt = 0
+    docterm_list = []
+    # preprocess
+    unique_terms = set()
     for f in files:
         # testing break
         if cnt > 3:
@@ -18,6 +21,8 @@ if __name__ == '__main__':
         clean_tokens = tk.remove_stops(tokens)
         clean_words = tk.stemmatize(clean_tokens)
 
-        save_path = save_dir + 'm_' + f
-        tmatrix = vector.make_tmatrix(clean_words, save_path)
-        print(tmatrix)
+        save_path = None # save_dir + 'm_' + f
+        docterm = vector.make_docterm_vector(clean_words, save_path, id=cnt)
+        docterm_list.append(docterm)
+        unique_terms.update(docterm.keys())
+    frozen_terms, matrix = vector.make_matrix(docterm_list, unique_terms)
