@@ -76,26 +76,6 @@ def make_idfmatrix(f_matrix):
     return idf_terms
 
 
-def tf_idf(docterm_list, terms, term_id, doc_id):
-    """
-    Calculate weight of term_id in doc_id.
-    :param docterm_list: list of docterm vectors
-    :param terms: language, set of terms, no duplicates
-    :param term_id: key of requested term in @terms
-    :param doc_id: key of requested doc in @docterm_list
-    :return:
-    """
-    # n x m matrix
-    f_matrix = make_fmatrix(docterm_list, terms)
-    # 1 x m matrix
-    idf_matrix = make_idfmatrix(f_matrix)
-    f_ij = f_matrix[term_id, doc_id]
-    max_f = np.amax(f_matrix, axis=1)[term_id]
-    tf_ij = f_ij / max_f
-    idf_i = idf_matrix[term_id]
-    return tf_ij / idf_i
-
-
 def make_fmatrix(docterm_list, terms):
     """
     Creates a frequency of terms in documents.
@@ -114,7 +94,10 @@ def make_fmatrix(docterm_list, terms):
             if term in document:
                 # document['t'] is total number of words in document
                 f_matrix[term_id, doc_id] = document[term] / document['t']
-    return f_matrix
+    max_f = np.zeros(shape=(n_terms, 1))
+    for term_id in range(n_terms):
+        max_f[term_id] = np.amax(f_matrix, axis=1)[term_id]
+    return f_matrix, max_f
 
 
 def make_matrix(docterm_list: list, unique_terms: set):
@@ -132,16 +115,23 @@ def make_matrix(docterm_list: list, unique_terms: set):
     # in rows are documents, in columns unique terms
     shapeA = (m_terms, n_docs)
     A = np.zeros(shapeA, dtype=float)
+    # n x m matrix, n x 1 matrix
+    f_matrix, max_f = make_fmatrix(docterm_list, terms)
+    # 1 x m matrix
+    idf_matrix = make_idfmatrix(f_matrix)
     for doc_id in range(n_docs):
         document = docterm_list[doc_id]
         for term_id in range(m_terms):
             term = terms[term_id]
             if term in document:
-                # TODO: make more efficient, remove element-wise computation
                 # TODO: save matrices for future use
                 # TODO: remove for-loops
                 # TODO: create class maybe?
-                A[term_id, doc_id] = tf_idf(docterm_list, terms, term_id, doc_id)
+                # TODO: solve zero-division
+                f_ij = f_matrix[term_id, doc_id]
+                tf_ij = f_ij / max_f
+                idf_i = idf_matrix[term_id]
+                A[term_id, doc_id] = tf_ij / idf_i
     return frozenset(terms), A
 
 
