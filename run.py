@@ -1,6 +1,7 @@
 import os
 from preprocessing import token as tk
 from vector import vector
+from LSI import lsi
 
 if __name__ == '__main__':
     path = 'articles/'
@@ -27,3 +28,5 @@ if __name__ == '__main__':
         docterm_list.append(docterm)
         unique_terms.update(docterm.keys())
     frozen_terms, matrix = vector.make_matrix(docterm_list, unique_terms)
+    # u, s, vh = lg.svd(matrix, full_matrices=True)
+    lsi.svd(matrix)
