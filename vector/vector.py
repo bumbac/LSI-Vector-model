@@ -93,7 +93,7 @@ def tf_idf(docterm_list, terms, term_id, doc_id):
     max_f = np.amax(f_matrix, axis=1)[term_id]
     tf_ij = f_ij / max_f
     idf_i = idf_matrix[term_id]
-    return tf_ij / idf_i
+    return tf_ij * idf_i
 
 
 def make_fmatrix(docterm_list, terms):
