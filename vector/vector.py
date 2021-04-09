@@ -91,7 +91,9 @@ def tf_idf(docterm_list, terms, term_id, doc_id):
     idf_matrix = make_idfmatrix(f_matrix)
     f_ij = f_matrix[term_id, doc_id]
     max_f = np.amax(f_matrix, axis=1)[term_id]
-    tf_ij = f_ij / max_f
+    tf_ij = 0
+    if max_f != 0:
+        tf_ij = f_ij / max_f
     idf_i = idf_matrix[term_id]
     return tf_ij * idf_i
 
@@ -132,7 +134,7 @@ def make_matrix(docterm_list: list, unique_terms: set):
     m_terms = len(unique_terms)
     # TODO: use frozen set everywhere?
     terms = sorted(unique_terms)
-    # in rows are documents, in columns unique terms
+    # in rows are unique terms, in columns documents
     shapeA = (m_terms, n_docs)
     A = np.zeros(shapeA, dtype=float)
     # n x m matrix, n x 1 matrix
@@ -149,8 +151,9 @@ def make_matrix(docterm_list: list, unique_terms: set):
                 # TODO: create class maybe?
                 # TODO: solve zero-division
                 f_ij = f_matrix[term_id, doc_id]
-                tf_ij = f_ij / max_f
+                tf_ij = f_ij / max_f[term_id]
                 idf_i = idf_matrix[term_id]
+                print(tf_ij, idf_i)
                 A[term_id, doc_id] = tf_ij / idf_i
     return frozenset(terms), A
 
