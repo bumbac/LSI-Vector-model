@@ -15,7 +15,7 @@ if __name__ == '__main__':
     unique_terms = set()
     for f in files:
         # testing break
-        if cnt > 50:
+        if cnt > 6:
             break
         cnt += 1
         document_file = open(path + f)
@@ -30,9 +30,11 @@ if __name__ == '__main__':
         clean_words = tk.stemmatize(clean_tokens)
         save_path = None # save_dir + 'm_' + f
         # creates vector of terms with relative weight to this document
-        docterm = vector.make_docterm_vector(clean_words, save_path, id=cnt)
+        docterm = vector.make_docterm_vector(clean_words, save_path, id=str(id))
         docterm_list.append(docterm)
         unique_terms.update(docterm.keys())
+    unique_terms.remove("i")
+    unique_terms.remove("t")
     frozen_terms, matrix = vector.make_matrix(docterm_list, unique_terms)
-    # u, s, vh = lg.svd(matrix, full_matrices=True)
+    print(frozen_terms, matrix)
     lsi.svd(matrix)
