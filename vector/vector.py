@@ -76,6 +76,26 @@ def make_idfmatrix(f_matrix):
     return idf_terms
 
 
+def tf_idf(docterm_list, terms, term_id, doc_id):
+    """
+    Calculate weight of term_id in doc_id.
+    :param docterm_list: list of docterm vectors
+    :param terms: language, set of terms, no duplicates
+    :param term_id: key of requested term in @terms
+    :param doc_id: key of requested doc in @docterm_list
+    :return:
+    """
+    # n x m matrix
+    f_matrix = make_fmatrix(docterm_list, terms)
+    # 1 x m matrix
+    idf_matrix = make_idfmatrix(f_matrix)
+    f_ij = f_matrix[term_id, doc_id]
+    max_f = np.amax(f_matrix, axis=1)[term_id]
+    tf_ij = f_ij / max_f
+    idf_i = idf_matrix[term_id]
+    return tf_ij * idf_i
+
+
 def make_fmatrix(docterm_list, terms):
     """
     Creates a frequency of terms in documents.
