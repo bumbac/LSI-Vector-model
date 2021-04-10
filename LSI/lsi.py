@@ -12,7 +12,7 @@ def svd_approximate(matrix, approx):
              diag_m - diagonal matrix kxk with eigenvalues in decreasing order
              final_v - decomposed matrix V_k
     """
-    # Get matrixes
+    # Get matrices
     a = matrix
     a_t = matrix.transpose()
 
