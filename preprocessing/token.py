@@ -1,6 +1,38 @@
+import os
+from hashlib import sha256
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer
+from vector.vector import make_docterm_vector
+
+
+def create_space(path):
+    files = os.listdir(path)
+    save_dir = 'matrixes'
+    cnt = 0
+    docterm_list = []
+    unique_doc_ids = []
+    # preprocess
+    for f in files:
+        # testing break
+        if cnt > 10:
+            break
+        cnt += 1
+        document_file = open(path + f)
+        document = document_file.read()
+        id = sha256(bytearray(document, encoding='utf8'))
+        if not id in unique_doc_ids:
+            unique_doc_ids.append(id)
+        else:
+            print("double document", id, path, f)
+        tokens = tokenize(document)
+        clean_tokens = remove_stops(tokens)
+        clean_words = stemmatize(clean_tokens)
+        save_path = None  # save_dir + 'm_' + f
+        # creates vector of terms with relative weight to this document
+        docterm = make_docterm_vector(clean_words, save_path, id=str(id))
+        docterm_list.append(docterm)
+    return docterm_list
 
 
 def tokenize(document):
