@@ -56,12 +56,43 @@ def svd(matrix, approx=50):
         :param approx: approximation for faster calculations, default value is 50
         :return: final_u - decomposed matrix U_k
         """
+    save_matrix = False
     u_k, s_k, v_k = svd_approximate(matrix, approx)
+
     print(u_k.shape)
     print(s_k.shape)
     print(v_k.shape)
 
     d_k = np.dot(s_k, v_k)
-    print(d_k)
 
+    print(d_k)
+    print(s_k)
+    s_k_inv = lg.inv(s_k)
+    test = True
+    if test:
+        print("double test if inverse S^-1 works")
+        print(np.allclose(np.dot(s_k, s_k_inv), np.eye(s_k.shape[0])))
+        print(np.allclose(np.dot(s_k_inv, s_k), np.eye(s_k.shape[0])))
+
+    if save_matrix:
+        u_k_file = open("U_k", "wb")
+        np.save(u_k_file, u_k)
+        u_k_file.close()
+        s_k_file = open("S_k", "wb")
+        np.save(s_k_file, s_k)
+        s_k_file.close()
+        v_k_file = open("V_k", "wb")
+        np.save(v_k_file, v_k)
+        v_k_file.close()
+        d_k_file = open("D_k", "wb")
+        np.save(d_k_file, d_k)
+        d_k_file.close()
+        s_k_inv_file = open("S_k_inv", "wb")
+        np.save(s_k_inv_file, s_k_inv)
+        s_k_inv_file.close()
+    return {"U": u_k,
+            "S": s_k,
+            "V": v_k,
+            "D": d_k,
+            "S_inv": s_k_inv}
     # TODO: Save approximated values, they should be calculated only once and recalculated if needed.
