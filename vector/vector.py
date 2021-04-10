@@ -115,7 +115,7 @@ def make_matrix(docterm_list: list, unique_terms: set):
     Creates a term-by-document matrix A. Rather sparse and inefficient computation.
     :param docterm_list: list of docterm vectors
     :param unique_terms: language, set of terms, no duplicates
-    :return: frozen set of terms,
+    :return: ordered list of terms,
              np.array(m_terms, n_documents) with weights_ij of term_i in doc_j
     """
     n_docs = len(docterm_list)
@@ -147,4 +147,4 @@ def make_matrix(docterm_list: list, unique_terms: set):
                     print("SHOULD NOT BE ZERO!")
                 idf_i = idf_matrix[term_id]
                 A[term_id, doc_id] = tf_ij * idf_i
-    return frozenset(terms), A
+    return terms, A
