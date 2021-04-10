@@ -48,6 +48,17 @@ def update_docterm_vector(docterm: dict, term: str, term_occurrence: int):
         docterm[term] = term_occurrence / total
 
 
+def create_matrix(docterm_list):
+    unique_terms = set()
+    for docterm in docterm_list:
+        unique_terms.update(docterm.keys())
+    unique_terms.remove("i")
+    unique_terms.remove("t")
+    frozen_terms, matrix = make_matrix(docterm_list, unique_terms)
+    print(frozen_terms, len(frozen_terms))
+    print(matrix, matrix.shape)
+    return frozen_terms, matrix
+
 def save_docterm_vector(docterm: dict, path: str):
     """
     Saves a single document with indexing.
@@ -128,13 +139,12 @@ def make_matrix(docterm_list: list, unique_terms: set):
                 # TODO: remove for-loops
                 # TODO: create class maybe?
                 # TODO: solve zero-division
-                f_ij = f_matrix[term_id, doc_id]
+                f_ij = f_matrix[term_id][doc_id]
                 tf_ij = 0
                 if max_f[term_id] != 0:
                     tf_ij = f_ij / max_f[term_id]
                 if tf_ij == 0:
                     print("SHOULD NOT BE ZERO!")
                 idf_i = idf_matrix[term_id]
-                print(tf_ij, idf_i)
                 A[term_id, doc_id] = tf_ij * idf_i
     return frozenset(terms), A
