@@ -1,10 +1,11 @@
-import os
 import numpy as np
 
 
-def make_docterm_vector(clean_words, save_path=None, id=0):
+def make_docterm_vector(clean_words, save_path=None, doc_id=0, article_filename=""):
     """
     Create occurrence matrix of terms in @clean_document.
+    :param doc_id: sha256 of document content
+    :param article_filename: name of file with article
     :param clean_words: list[] of tokens, stemmatized, w/o stop words
     :param save_path: save location
     :return: dict{term: occurrence in [0, 1]}
@@ -15,7 +16,7 @@ def make_docterm_vector(clean_words, save_path=None, id=0):
     # 'i' is unique identifier
     # 't' is total number of words in this document
     # always terms length > 1, so no conflicts
-    docterm = {'i': id, 't': total}
+    docterm = {'i': doc_id, 't': total, 'n': article_filename}
     for term in terms:
         term_occurrence = 0
         for token in clean_words:
@@ -54,10 +55,12 @@ def create_matrix(docterm_list):
         unique_terms.update(docterm.keys())
     unique_terms.remove("i")
     unique_terms.remove("t")
+    unique_terms.remove("n")
     frozen_terms, matrix = make_matrix(docterm_list, unique_terms)
     print(frozen_terms, len(frozen_terms))
     print(matrix, matrix.shape)
     return frozen_terms, matrix
+
 
 def save_docterm_vector(docterm: dict, path: str):
     """
