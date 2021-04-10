@@ -6,7 +6,7 @@ from numpy import linalg as lg
 def svd_approximate(matrix, approx):
     """
     Computes approximated SVD from given matrix.
-    :param matrix: term-by-document matirix
+    :param matrix: term-by-document matrix
     :param approx: approximation for faster calculations
     :return: final_u - decomposed matrix U_k
              diag_m - diagonal matrix kxk with eigenvalues in decreasing order
