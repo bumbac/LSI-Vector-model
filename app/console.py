@@ -1,3 +1,5 @@
+import bisect
+import numpy as np
 from LSI import retrieval
 
 
@@ -6,8 +8,13 @@ def read_input():
     query = {}
     while not correct_format:
         query = {}
-        line = input("Write query with weights.\n"
-                     "For example: cat 0.4 food 0.5 cheap 0.1\n")
+        test = False
+        line = ""
+        if test:
+            line = "'poor 0.7 're 0.3"
+        else:
+            line = input("Write query with weights.\n"
+                         "For example: cat 0.4 food 0.5 cheap 0.1\n")
         example_query = "cat 0.4 food 0.5 cheap 0.1"
         tokens = line.split(" ")
         # weight is missing, uneven number of parsed tokens
@@ -40,15 +47,24 @@ def read_input():
 
 
 def start(matrices_dict):
+    terms = matrices_dict["Terms"]
     while True:
-        query = read_input()
-        if len(query) == 0:
+        tokens = read_input()
+        if len(tokens) == 0:
             break
-        print(query)
-        retrieval.func(matrices_dict, query)
-
-
-
-
-
-
+        print(tokens)
+        query_vector = np.zeros((len(terms), 1), dtype=float)
+        print(query_vector)
+        for term in tokens.keys():
+            term_id = bisect.bisect_left(terms, term)
+            # term in query is not present in language space
+            if term_id == len(terms):
+                continue
+            # term is present in the language space, update query vector
+            if terms[term_id] == term:
+                query_vector[term_id, 0] = tokens[term]
+            # term in query is not present in language space
+            if terms[term_id] != term:
+                continue
+        print(query_vector)
+        return retrieval.func(matrices_dict, query_vector)
