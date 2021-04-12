@@ -8,7 +8,7 @@ from app import console
 
 if __name__ == '__main__':
     path = 'articles/'
-    max_articles = 150
+    max_articles = 5
     docterm_list = tk.create_space(path, max_articles=max_articles)
     terms, matrix = vector.create_matrix(docterm_list)
     matrices_dict = lsi.svd(matrix)
@@ -16,6 +16,8 @@ if __name__ == '__main__':
     flag = True
     while flag:
         top = console.start(matrices_dict)
+        if len(top) == 0:
+            break
         print("top doc ids:", top)
         for doc_sim_tuple in top:
             doc_number = doc_sim_tuple[0]

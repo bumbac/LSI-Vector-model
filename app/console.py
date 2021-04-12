@@ -60,7 +60,7 @@ def start(matrices_dict):
     while True:
         tokens = read_input()
         if len(tokens) == 0:
-            break
+            return {}
         print(tokens)
         query_vector = np.zeros((len(terms), 1), dtype=float)
         # assign weight to all terms
