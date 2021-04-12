@@ -50,16 +50,20 @@ def update_docterm_vector(docterm: dict, term: str, term_occurrence: int):
 
 
 def create_matrix(docterm_list):
+    """
+    Create a term by document matrix A. Calculates w_ij and returns language
+    :param docterm_list: list of docterm vectors
+    :return: list of asc. ordered terms, A matrix
+    """
     unique_terms = set()
     for docterm in docterm_list:
         unique_terms.update(docterm.keys())
     unique_terms.remove("i")
     unique_terms.remove("t")
     unique_terms.remove("n")
-    frozen_terms, matrix = make_matrix(docterm_list, unique_terms)
-    print(frozen_terms, len(frozen_terms))
-    print(matrix, matrix.shape)
-    return frozen_terms, matrix
+    terms_list, matrix = make_matrix(docterm_list, unique_terms)
+    print(terms_list, len(terms_list))
+    return terms_list, matrix
 
 
 def save_docterm_vector(docterm: dict, path: str):

@@ -1,3 +1,4 @@
+import numpy as np
 import os
 from hashlib import sha256
 from preprocessing import token as tk
@@ -6,7 +7,7 @@ from LSI import lsi
 from app import console
 
 if __name__ == '__main__':
-    path = 'articles/example/'
+    path = 'articles/'
     docterm_list = tk.create_space(path)
     terms, matrix = vector.create_matrix(docterm_list)
     matrices_dict = lsi.svd(matrix)
@@ -15,10 +16,13 @@ if __name__ == '__main__':
     while flag:
         top = console.start(matrices_dict)
         print("top doc ids:", top)
-        for id in top:
-            document = docterm_list[id]
+        for doc_sim_tuple in top:
+            doc_number = doc_sim_tuple[0]
+            similarity_ranking = doc_sim_tuple[1]
+            document = docterm_list[doc_number]
             filename = path + document['n']
             print(id, document['i'], filename)
             f = open(filename)
+            print("SIMILARITY:", similarity_ranking)
             print(f.read())
         flag = False
