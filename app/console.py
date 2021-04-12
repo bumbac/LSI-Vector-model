@@ -4,6 +4,10 @@ from LSI import retrieval
 
 
 def read_input():
+    """
+    Reads console input in specific form and returns parsed query
+    :return: dict{term: weight}
+    """
     correct_format = False
     query = {}
     while not correct_format:
@@ -47,6 +51,11 @@ def read_input():
 
 
 def start(matrices_dict):
+    """
+    CLI interface for fetching similar documents to query
+    :param matrices_dict: dict of calculated matrices U, S, V, D, S_inv
+    :return: descending list of tuples(doc_number, similarity)
+    """
     terms = matrices_dict["Terms"]
     while True:
         tokens = read_input()
@@ -55,6 +64,7 @@ def start(matrices_dict):
         print(tokens)
         query_vector = np.zeros((len(terms), 1), dtype=float)
         print(query_vector)
+        # assign weight to all terms
         for term in tokens.keys():
             term_id = bisect.bisect_left(terms, term)
             # term in query is not present in language space
