@@ -10,19 +10,24 @@ def create_space(path):
     files = os.listdir(path)
     save_dir = 'matrices'
     cnt = 0
+    max_articles = 4
     docterm_list = []
     unique_doc_ids = []
     # preprocess
+    found_articles = []
     for f in files:
-        # testing break
-        if cnt > 4:
+        if os.path.isdir(path + f):
+            continue
+        else:
+            found_articles.append(f)
+        if cnt > max_articles:
             break
         cnt += 1
         document_file = open(path + f)
         document = document_file.read()
         doc_id = sha256(bytearray(document, encoding='utf8')).hexdigest()
         if doc_id in unique_doc_ids:
-            print("double document", doc_id, path, f)
+            print("same hash as other article", doc_id, path, f)
         else:
             unique_doc_ids.append(doc_id)
         tokens = tokenize(document)
@@ -32,6 +37,7 @@ def create_space(path):
         # creates vector of terms with relative weight to this document
         docterm = make_docterm_vector(clean_words, save_path, doc_id=str(doc_id), article_filename=f)
         docterm_list.append(docterm)
+    print("Found these articles:", *found_articles, sep=', ')
     return docterm_list
 
 
@@ -71,10 +77,10 @@ def stemmatize(tokens):
     :param tokens:
     :return: list[] of tokens
     """
-    stemmer_techs = [PorterStemmer(), LancasterStemmer(), SnowballStemmer('english')]
-    for stemmer in stemmer_techs:
-        clean_words = []
-        for word in tokens:
-            clean_words.append(stemmer.stem(word))
-            # word.count()
-        return clean_words
+    # stemmer_techs = [PorterStemmer(), LancasterStemmer(), SnowballStemmer('english')]
+    stemmer = PorterStemmer()
+    clean_words = []
+    for word in tokens:
+        clean_words.append(stemmer.stem(word))
+        # word.count()
+    return clean_words
