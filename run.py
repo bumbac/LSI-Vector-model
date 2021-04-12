@@ -8,7 +8,8 @@ from app import console
 
 if __name__ == '__main__':
     path = 'articles/'
-    docterm_list = tk.create_space(path)
+    max_articles = 150
+    docterm_list = tk.create_space(path, max_articles=max_articles)
     terms, matrix = vector.create_matrix(docterm_list)
     matrices_dict = lsi.svd(matrix)
     matrices_dict["Terms"] = terms
@@ -21,8 +22,7 @@ if __name__ == '__main__':
             similarity_ranking = doc_sim_tuple[1]
             document = docterm_list[doc_number]
             filename = path + document['n']
-            print(id, document['i'], filename)
+            print('document:', doc_number, '||', filename, document['i'])
             f = open(filename)
             print("SIMILARITY:", similarity_ranking)
-            print(f.read())
-        flag = False
+            # print(f.read())
