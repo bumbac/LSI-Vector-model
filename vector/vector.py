@@ -137,6 +137,7 @@ def make_matrix(docterm_list: list, unique_terms: set):
     f_matrix, max_f = make_fmatrix(docterm_list, terms)
     # 1 x m matrix
     idf_matrix = make_idfmatrix(f_matrix)
+    print("\n\nCALCULATING document-by-term MATRIX A\n\n")
     for doc_id in range(n_docs):
         document = docterm_list[doc_id]
         for term_id in range(m_terms):
@@ -154,4 +155,6 @@ def make_matrix(docterm_list: list, unique_terms: set):
                     print("SHOULD NOT BE ZERO!")
                 idf_i = idf_matrix[term_id]
                 A[term_id, doc_id] = tf_ij * idf_i
+            print('.', end='')
+    print("\n\nCALCULATION OF A MATRIX COMPLETE\n\n")
     return terms, A

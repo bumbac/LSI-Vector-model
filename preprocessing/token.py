@@ -6,15 +6,21 @@ from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer
 from vector.vector import make_docterm_vector
 
 
-def create_space(path):
+def create_space(path, max_articles=5):
+    """
+    Parse documents(tokenize, stemmatize, remove stops) and create docterm vectors/
+    :param path: location of documents
+    :param max_articles: number of articles to process
+    :return: list of docterm vectors
+    """
     files = os.listdir(path)
     save_dir = 'matrices'
     cnt = 0
-    max_articles = 4
     docterm_list = []
     unique_doc_ids = []
     # preprocess
     found_articles = []
+    print("TOKENIZE AND STEMMATIZE AND CLEAN WORDS in progress")
     for f in files:
         if os.path.isdir(path + f):
             continue
@@ -37,7 +43,8 @@ def create_space(path):
         # creates vector of terms with relative weight to this document
         docterm = make_docterm_vector(clean_words, save_path, doc_id=str(doc_id), article_filename=f)
         docterm_list.append(docterm)
-    print("Found these articles:", *found_articles, sep=', ')
+        print(".", end='')
+    print("\n\n\nFound these articles:", *found_articles, sep=', ')
     return docterm_list
 
 

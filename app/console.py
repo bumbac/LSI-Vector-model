@@ -63,7 +63,6 @@ def start(matrices_dict):
             break
         print(tokens)
         query_vector = np.zeros((len(terms), 1), dtype=float)
-        print(query_vector)
         # assign weight to all terms
         for term in tokens.keys():
             term_id = bisect.bisect_left(terms, term)
@@ -76,5 +75,4 @@ def start(matrices_dict):
             # term in query is not present in language space
             if terms[term_id] != term:
                 continue
-        print(query_vector)
         return retrieval.func(matrices_dict, query_vector)

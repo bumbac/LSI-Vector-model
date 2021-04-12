@@ -12,7 +12,7 @@ def svd_approximate(matrix, approx):
              diag_m - diagonal matrix kxk with eigenvalues in decreasing order
              final_v - decomposed matrix V_k
     """
-    print("COMPUTING SVD")
+    print("CALCULATING SVD\n\n")
     print("THIS WILL TAKE SOME TIME")
     # Get matrices
     a = matrix
@@ -24,8 +24,8 @@ def svd_approximate(matrix, approx):
     v = np.dot(a_t, a)
     print("U = A {dot} A^T COMPLETE")
     print("V = A^T {dot} A COMPLETE")
-    print("CALCULATING EIGEN VECTORS AND VALUES")
-    print("THIS WILL TAKE SOME TIME")
+    print("\n\nCALCULATING EIGEN VECTORS AND VALUES")
+    print("THIS WILL TAKE SOME TIME\n\n")
     # Check for correct size of matrix
     if v.shape[0] < approx:
         approx = v.shape[0]
