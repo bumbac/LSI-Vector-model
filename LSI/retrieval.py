@@ -14,15 +14,15 @@ def func(matrices_dict, query_vector):
     s = matrices_dict["S"]
     v = matrices_dict["V"]
     d = matrices_dict["D"]
+    v = np.transpose(v)
     s_inv = matrices_dict["S_inv"]
     q_t = np.transpose(query_vector)
     q_new = np.linalg.multi_dot([q_t, u, s_inv])
     ranking_of_documents = {}
     for d_ in range(v.shape[1]):
-        print(d_)
         document = v[:][d_]
         ranking = similarity(q_new, document)
-        ranking_of_documents[d_] = ranking[0]
+        ranking_of_documents[d_] = ranking
     sorted_documents = sorted(ranking_of_documents, key=ranking_of_documents.get, reverse=True)
     top_k = 3
     sorted_doc_similarity = []
@@ -40,4 +40,9 @@ def similarity(query, document):
     """
     frac_top = np.dot(query, document)
     frac_bottom = (norm(query) * norm(document))
-    return frac_top / frac_bottom
+    # TODO
+    # WHAT DOES IT MEAN???
+    result = [0]
+    if frac_bottom != 0:
+        result = frac_top / frac_bottom
+    return result[0]
