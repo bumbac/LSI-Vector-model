@@ -8,16 +8,16 @@ from vector.vector import make_docterm_vector
 
 def create_space(path, max_articles=5):
     """
-    Parse documents(tokenize, stemmatize, remove stops) and create docterm vectors/
+    Parse documents(tokenize, stemmatize, remove stops) and create docterm vectors
     :param path: location of documents
     :param max_articles: number of articles to process
     :return: list of docterm vectors
     """
     files = os.listdir(path)
-    save_dir = 'matrices'
-    cnt = 0
+    # order of documents is important for matrix (m x n_docs), does not change
+    doc_id = 0
     docterm_list = []
-    unique_doc_ids = []
+    unique_doc_hashes = []
     # preprocess
     found_articles = []
     print("TOKENIZE AND STEMMATIZE AND CLEAN WORDS in progress")
@@ -26,39 +26,44 @@ def create_space(path, max_articles=5):
             continue
         else:
             found_articles.append(f)
-        if cnt > max_articles:
+        if doc_id > max_articles:
             break
-        cnt += 1
         document_file = open(path + f)
-        document = document_file.read()
-        doc_id = sha256(bytearray(document, encoding='utf8')).hexdigest()
-        if doc_id in unique_doc_ids:
-            print("same hash as other article", doc_id, path, f)
+        raw_document = document_file.read()
+        # hash used for checking duplicate documents
+        doc_hash = sha256(bytearray(raw_document, encoding='utf8')).hexdigest()
+        if doc_hash in unique_doc_hashes:
+            print("same hash as other document", doc_hash, path, f)
         else:
-            unique_doc_ids.append(doc_id)
-        tokens = tokenize(document)
+            unique_doc_hashes.append(doc_hash)
+        tokens = tokenize(raw_document)
         clean_tokens = remove_stops(tokens)
+        print("Tokens:\n", clean_tokens)
         clean_words = stemmatize(clean_tokens)
         save_path = None  # save_dir + 'm_' + f
         # creates vector of terms with relative weight to this document
-        docterm = make_docterm_vector(clean_words, save_path, doc_id=str(doc_id), article_filename=f)
+        docterm = make_docterm_vector(clean_words, save_path,
+                                      doc_hash=str(doc_hash), doc_filename=f,
+                                      doc_id=doc_id)
         docterm_list.append(docterm)
+        doc_id += 1
+
         print(".", end='')
     print("\n\n\nFound these articles:", *found_articles, sep=', ')
     return docterm_list
 
 
-def tokenize(document):
+def tokenize(raw_document):
     """
     Create a list of tokens (english words from @document). Tokens are in original form,
     there are stop words, units, names, typos, etc.
-    :param document: str
+    :param raw_document: str
     :return: list[] of tokens
     """
-    txt_title_start = document.find('Text: ')
+    txt_title_start = raw_document.find('Text: ')
     txt_body_start = txt_title_start + len('Text: ')
-    document = document[txt_body_start:]
-    tokens = word_tokenize(document, 'english')
+    raw_document = raw_document[txt_body_start:]
+    tokens = word_tokenize(raw_document, 'english')
     return tokens
 
 

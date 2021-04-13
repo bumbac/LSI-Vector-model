@@ -1,22 +1,24 @@
 import numpy as np
 
 
-def make_docterm_vector(clean_words, save_path=None, doc_id=0, article_filename=""):
+def make_docterm_vector(clean_words, save_path=None, doc_hash='0', doc_filename="", doc_id=0):
     """
-    Create occurrence matrix of terms in @clean_document.
-    :param doc_id: sha256 of document content
-    :param article_filename: name of file with article
+    Create occurrence matrix of terms in @clean_words. Add metadata to dict.
     :param clean_words: list[] of tokens, stemmatized, w/o stop words
     :param save_path: save location
+    :param doc_hash: sha256 of raw document content before preprocess
+    :param doc_filename: name of file with article
+    :param doc_id: sha256 of document content
     :return: dict{term: occurrence in [0, 1]}
     """
     # unique terms
     terms = set(clean_words)
     total = len(clean_words)
-    # 'i' is unique identifier
+    # 'i' is unique identifier [0, ..., n]
     # 't' is total number of words in this document
-    # always terms length > 1, so no conflicts
-    docterm = {'i': doc_id, 't': total, 'n': article_filename}
+    # 'h' is sha256 of document content
+    # 'n' is document filename
+    docterm = {'h': doc_hash, 't': total, 'n': doc_filename, 'i': doc_id}
     for term in terms:
         term_occurrence = 0
         for token in clean_words:
@@ -61,6 +63,7 @@ def create_matrix(docterm_list):
     unique_terms.remove("i")
     unique_terms.remove("t")
     unique_terms.remove("n")
+    unique_terms.remove("h")
     terms_list, matrix = make_matrix(docterm_list, unique_terms)
     print(terms_list, len(terms_list))
     return terms_list, matrix
@@ -143,10 +146,6 @@ def make_matrix(docterm_list: list, unique_terms: set):
         for term_id in range(m_terms):
             term = terms[term_id]
             if term in document:
-                # TODO: save matrices for future use
-                # TODO: remove for-loops
-                # TODO: create class maybe?
-                # TODO: solve zero-division
                 f_ij = f_matrix[term_id][doc_id]
                 tf_ij = 0
                 if max_f[term_id] != 0:
