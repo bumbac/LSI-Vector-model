@@ -1,21 +1,24 @@
-import os
 import numpy as np
 
 
-def make_docterm_vector(clean_words, save_path=None, id=0):
+def make_docterm_vector(clean_words, save_path=None, doc_hash='0', doc_filename="", doc_id=0):
     """
-    Create occurrence matrix of terms in @clean_document.
+    Create occurrence matrix of terms in @clean_words. Add metadata to dict.
     :param clean_words: list[] of tokens, stemmatized, w/o stop words
     :param save_path: save location
+    :param doc_hash: sha256 of raw document content before preprocess
+    :param doc_filename: name of file with article
+    :param doc_id: sha256 of document content
     :return: dict{term: occurrence in [0, 1]}
     """
     # unique terms
     terms = set(clean_words)
     total = len(clean_words)
-    # 'i' is unique identifier
+    # 'i' is unique identifier [0, ..., n]
     # 't' is total number of words in this document
-    # always terms length > 1, so no conflicts
-    docterm = {'i': id, 't': total}
+    # 'h' is sha256 of document content
+    # 'n' is document filename
+    docterm = {'h': doc_hash, 't': total, 'n': doc_filename, 'i': doc_id}
     for term in terms:
         term_occurrence = 0
         for token in clean_words:
@@ -48,9 +51,26 @@ def update_docterm_vector(docterm: dict, term: str, term_occurrence: int):
         docterm[term] = term_occurrence / total
 
 
+def create_matrix(docterm_list):
+    """
+    Create a term by document matrix A. Calculates w_ij and returns language
+    :param docterm_list: list of docterm vectors
+    :return: list of asc. ordered terms, A matrix
+    """
+    unique_terms = set()
+    for docterm in docterm_list:
+        unique_terms.update(docterm.keys())
+    unique_terms.remove("i")
+    unique_terms.remove("t")
+    unique_terms.remove("n")
+    unique_terms.remove("h")
+    terms_list, matrix = make_matrix(docterm_list, unique_terms)
+    print(terms_list, len(terms_list))
+    return terms_list, matrix
+
+
 def save_docterm_vector(docterm: dict, path: str):
     """
-    # TODO: create a class maybe? saving, interface...
     Saves a single document with indexing.
     :param docterm: Dictionary of terms and occurences
     :param path: save location
@@ -66,34 +86,14 @@ def make_idfmatrix(f_matrix):
     :param f_matrix: np.array(shape(n_terms, m_docs)) frequency matrix
     :return: np.array(shape=(n_terms, 1))
     """
-    m_docs = f_matrix.shape[1]
+    n_docs = f_matrix.shape[1]
     term_present_mask = np.ma.make_mask(f_matrix, copy=True)
     # 1D array
     df_terms = term_present_mask.sum(axis=1)
-    total_matrix = np.full(df_terms.shape, fill_value=m_docs)
+    total_matrix = np.full(df_terms.shape, fill_value=n_docs)
     total_matrix = total_matrix / df_terms
     idf_terms = np.log(total_matrix)
     return idf_terms
-
-
-def tf_idf(docterm_list, terms, term_id, doc_id):
-    """
-    Calculate weight of term_id in doc_id.
-    :param docterm_list: list of docterm vectors
-    :param terms: language, set of terms, no duplicates
-    :param term_id: key of requested term in @terms
-    :param doc_id: key of requested doc in @docterm_list
-    :return:
-    """
-    # n x m matrix
-    f_matrix = make_fmatrix(docterm_list, terms)
-    # 1 x m matrix
-    idf_matrix = make_idfmatrix(f_matrix)
-    f_ij = f_matrix[term_id, doc_id]
-    max_f = np.amax(f_matrix, axis=1)[term_id]
-    tf_ij = f_ij / max_f
-    idf_i = idf_matrix[term_id]
-    return tf_ij * idf_i
 
 
 def make_fmatrix(docterm_list, terms):
@@ -103,19 +103,19 @@ def make_fmatrix(docterm_list, terms):
     :param terms: language, set of terms, no duplicates
     :return: np.array(shape=(n_terms, m_docs)
     """
-    n_terms = len(terms)
-    m_docs = len(docterm_list)
-    shape = (n_terms, m_docs)
+    m_terms = len(terms)
+    n_docs = len(docterm_list)
+    shape = (m_terms, n_docs)
     f_matrix = np.zeros(shape)
-    for term_id in range(n_terms):
-        for doc_id in range(m_docs):
+    for term_id in range(m_terms):
+        for doc_id in range(n_docs):
             document = docterm_list[doc_id]
             term = terms[term_id]
             if term in document:
                 # document['t'] is total number of words in document
                 f_matrix[term_id, doc_id] = document[term] / document['t']
-    max_f = np.zeros(shape=(n_terms, 1))
-    for term_id in range(n_terms):
+    max_f = np.zeros(shape=(m_terms, 1))
+    for term_id in range(m_terms):
         max_f[term_id] = np.amax(f_matrix, axis=1)[term_id]
     return f_matrix, max_f
 
@@ -125,43 +125,35 @@ def make_matrix(docterm_list: list, unique_terms: set):
     Creates a term-by-document matrix A. Rather sparse and inefficient computation.
     :param docterm_list: list of docterm vectors
     :param unique_terms: language, set of terms, no duplicates
-    :return: frozen set of terms,
+    :return: ordered list of terms,
              np.array(m_terms, n_documents) with weights_ij of term_i in doc_j
     """
     n_docs = len(docterm_list)
     m_terms = len(unique_terms)
     # TODO: use frozen set everywhere?
     terms = sorted(unique_terms)
-    # in rows are documents, in columns unique terms
+    # in rows are unique terms, in columns documents
     shapeA = (m_terms, n_docs)
+    # m x n matrix, term-by-document
     A = np.zeros(shapeA, dtype=float)
-    # n x m matrix, n x 1 matrix
+    # m x n matrix, m x 1 matrix
     f_matrix, max_f = make_fmatrix(docterm_list, terms)
     # 1 x m matrix
     idf_matrix = make_idfmatrix(f_matrix)
+    print("\n\nCALCULATING document-by-term MATRIX A\n\n")
     for doc_id in range(n_docs):
         document = docterm_list[doc_id]
         for term_id in range(m_terms):
             term = terms[term_id]
             if term in document:
-                # TODO: save matrices for future use
-                # TODO: remove for-loops
-                # TODO: create class maybe?
-                # TODO: solve zero-division
-                f_ij = f_matrix[term_id, doc_id]
-                tf_ij = f_ij / max_f
+                f_ij = f_matrix[term_id][doc_id]
+                tf_ij = 0
+                if max_f[term_id] != 0:
+                    tf_ij = f_ij / max_f[term_id]
+                if tf_ij == 0:
+                    print("SHOULD NOT BE ZERO!")
                 idf_i = idf_matrix[term_id]
-                A[term_id, doc_id] = tf_ij / idf_i
-    return frozenset(terms), A
-
-
-def size_of_space(tmatrix_list):
-    """
-    No idea why.
-    :param tmatrix_list:
-    :return:
-    """
-    sum_of_totals = 0
-    for tmatrix in tmatrix_list:
-        sum_of_totals += tmatrix['t']
-    return sum_of_totals
+                A[term_id, doc_id] = tf_ij * idf_i
+            print('.', end='')
+    print("\n\nCALCULATION OF A MATRIX COMPLETE\n\n")
+    return terms, A
