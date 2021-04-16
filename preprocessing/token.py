@@ -6,7 +6,7 @@ from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer
 from vector.vector import make_docterm_vector
 
 
-def create_space(path, max_articles=5):
+def create_space(path, max_articles=10):
     """
     Parse documents(tokenize, stemmatize, remove stops) and create docterm vectors
     :param path: location of documents
@@ -33,12 +33,11 @@ def create_space(path, max_articles=5):
         # hash used for checking duplicate documents
         doc_hash = sha256(bytearray(raw_document, encoding='utf8')).hexdigest()
         if doc_hash in unique_doc_hashes:
+            doc_hash = sha256(bytearray(doc_hash, encoding='utf8')).hexdigest()
             print("same hash as other document", doc_hash, path, f)
-        else:
-            unique_doc_hashes.append(doc_hash)
+        unique_doc_hashes.append(doc_hash)
         tokens = tokenize(raw_document)
         clean_tokens = remove_stops(tokens)
-        print("Tokens:\n", clean_tokens)
         clean_words = stemmatize(clean_tokens)
         save_path = None  # save_dir + 'm_' + f
         # creates vector of terms with relative weight to this document
@@ -48,7 +47,6 @@ def create_space(path, max_articles=5):
         docterm_list.append(docterm)
         doc_id += 1
 
-        print(".", end='')
     print("\n\n\nFound these articles:", *found_articles, sep=', ')
     return docterm_list
 

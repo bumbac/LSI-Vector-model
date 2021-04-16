@@ -92,7 +92,7 @@ def make_idfmatrix(f_matrix):
     df_terms = term_present_mask.sum(axis=1)
     total_matrix = np.full(df_terms.shape, fill_value=n_docs)
     total_matrix = total_matrix / df_terms
-    idf_terms = np.log(total_matrix)
+    idf_terms = np.log2(total_matrix)
     return idf_terms
 
 

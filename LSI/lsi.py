@@ -18,7 +18,7 @@ def svd_approximate(matrix, approx):
     a = matrix
     a_t = matrix.transpose()
     print("MATRIX SHAPE:", a.shape)
-
+    _u, _s, _v = lg.svd(a)
     # Compute U = AA^T and V = A^TA
     u = np.dot(a, a_t)
     v = np.dot(a_t, a)
@@ -34,34 +34,39 @@ def svd_approximate(matrix, approx):
         approx = v.shape[1]
 
     # Compute eigen vectors of correlation matrix of terms
-    u_eig_val, u_eig_vec = lg.eig(u)
+    # u_eig_val, u_eig_vec = lg.eig(u)
     print("U EIGEN VECTORS COMPLETE")
     print("U EIGEN VALUES COMPLETE")
     # Approximates matrix
-    final_u = u_eig_vec[:, 0:approx]
+    #final_u = u_eig_vec[:, 0:approx]
     # print("Dimensions of Matrix U:",final_u.shape)
 
     # Compute eigen vectors of correlation matrix of documents
-    v_eig_val, v_eig_vec = lg.eig(v)
+    #v_eig_val, v_eig_vec = lg.eig(v)
     print("V EIGEN VECTORS COMPLETE")
     print("V EIGEN VALUES COMPLETE")
     # Approximates matrix
-    final_v = v_eig_vec.transpose()[:approx, :]
+    #final_v = v_eig_vec.transpose()[:approx, :]
     # print("Dimensions of Matrix V", final_v.shape)
 
-    s = u[0:approx, 0:approx]
-    s_eig_val, s_eig_vec = lg.eig(s)
+    #s = u[0:approx, 0:approx]
+    #s_eig_val, s_eig_vec = lg.eig(s)
     print("S EIGEN VECTORS COMPLETE")
     print("S EIGEN VALUES COMPLETE")
-    eig_values = sorted(s_eig_val, reverse=True)
+    #eig_values = sorted(s_eig_val, reverse=True)
     # eig_values = sorted(v_eig_val, reverse=True)
-    diag_m = np.diag(eig_values)[0:approx, 0:approx]
+    #diag_m = np.diag(eig_values)[0:approx, 0:approx]
     # print(diag_m)
+    #_final_v = np.transpose(final_v)
+    _v = _v[:approx, :]
+    _u = _u[:, :approx]
+    sigma = np.zeros(shape=(approx, approx))
+    for diag in range(sigma.shape[1]):
+        sigma[diag, diag] = _s[diag]
+    return _u, sigma, _v
 
-    return final_u, diag_m, final_v
 
-
-def svd(matrix, approx=50):
+def svd(matrix, approx=10):
     """
         Saves computed and decomposed values for further usage.
         :param matrix: term-by-document matrix
