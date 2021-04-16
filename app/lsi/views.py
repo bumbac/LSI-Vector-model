@@ -27,7 +27,7 @@ class Article:
 def home(request):
     """
     View which displays all articles on the website.
-    :param request: django requesy
+    :param request: django request
     :return: page_obj: array with articles as objects.
     """
 
@@ -75,7 +75,7 @@ def home(request):
 def article(request, article_id):
     """
     View which displays selected article with similarity of other articles.
-    :param request: django reques
+    :param request: django request
     :param article_id: selected article id
     :return: article: object that contains title and content.
     """
