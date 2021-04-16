@@ -4,7 +4,6 @@ import glob
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 
 
 def index(request):
@@ -28,7 +27,7 @@ class Article:
 def home(request):
     """
     View which displays all articles on the website.
-    :param request: term-by-document matrix
+    :param request: django requesy
     :return: page_obj: array with articles as objects.
     """
 
@@ -76,14 +75,14 @@ def home(request):
 def article(request, article_id):
     """
     View which displays selected article with similarity of other articles.
-    :param request: term-by-document matrix
+    :param request: django reques
     :param article_id: selected article id
     :return: article: object that contains title and content.
     """
     # Finds article with id
     file = glob.glob(settings.ARTICLE_URL + "/article" + str(article_id) + ".txt")
 
-    # Reads content form file
+    # Reads content from file
     open_file = open(file[0], 'r')
     obj = open_file.read()
     obj_content = obj.splitlines()
