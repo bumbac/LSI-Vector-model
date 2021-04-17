@@ -8,61 +8,24 @@ def svd_approximate(matrix, approx):
     Computes approximated SVD from given matrix.
     :param matrix: term-by-document matrix
     :param approx: approximation for faster calculations
-    :return: final_u - decomposed matrix U_k
-             diag_m - diagonal matrix kxk with eigenvalues in decreasing order
-             final_v - decomposed matrix V_k
+    :return: _u - decomposed matrix U_k
+             sigma - diagonal matrix kxk with eigenvalues in decreasing order
+             _v - decomposed matrix V_k
     """
-    print("CALCULATING SVD\n\n")
-    print("THIS WILL TAKE SOME TIME")
-    # Get matrices
+    # Get matrix
     a = matrix
-    a_t = matrix.transpose()
-    print("MATRIX SHAPE:", a.shape)
+
+    # Linag SVD
     _u, _s, _v = lg.svd(a)
-    # Compute U = AA^T and V = A^TA
-    u = np.dot(a, a_t)
-    v = np.dot(a_t, a)
-    print("U = A {dot} A^T COMPLETE")
-    print("V = A^T {dot} A COMPLETE")
-    print("\n\nCALCULATING EIGEN VECTORS AND VALUES")
-    print("THIS WILL TAKE SOME TIME\n\n")
-    # Check for correct size of matrix
-    if v.shape[0] < approx:
-        approx = v.shape[0]
 
-    if v.shape[1] < approx:
-        approx = v.shape[1]
-
-    # Compute eigen vectors of correlation matrix of terms
-    # u_eig_val, u_eig_vec = lg.eig(u)
-    print("U EIGEN VECTORS COMPLETE")
-    print("U EIGEN VALUES COMPLETE")
-    # Approximates matrix
-    #final_u = u_eig_vec[:, 0:approx]
-    # print("Dimensions of Matrix U:",final_u.shape)
-
-    # Compute eigen vectors of correlation matrix of documents
-    #v_eig_val, v_eig_vec = lg.eig(v)
-    print("V EIGEN VECTORS COMPLETE")
-    print("V EIGEN VALUES COMPLETE")
-    # Approximates matrix
-    #final_v = v_eig_vec.transpose()[:approx, :]
-    # print("Dimensions of Matrix V", final_v.shape)
-
-    #s = u[0:approx, 0:approx]
-    #s_eig_val, s_eig_vec = lg.eig(s)
-    print("S EIGEN VECTORS COMPLETE")
-    print("S EIGEN VALUES COMPLETE")
-    #eig_values = sorted(s_eig_val, reverse=True)
-    # eig_values = sorted(v_eig_val, reverse=True)
-    #diag_m = np.diag(eig_values)[0:approx, 0:approx]
-    # print(diag_m)
-    #_final_v = np.transpose(final_v)
+    # Approximate
     _v = _v[:approx, :]
     _u = _u[:, :approx]
+
     sigma = np.zeros(shape=(approx, approx))
     for diag in range(sigma.shape[1]):
         sigma[diag, diag] = _s[diag]
+
     return _u, sigma, _v
 
 
@@ -73,28 +36,19 @@ def svd(matrix, approx=10):
         :param approx: approximation for faster calculations, default value is 50
         :return: final_u - decomposed matrix U_k
         """
-    save_matrix = False
+
     u_k, s_k, v_k = svd_approximate(matrix, approx)
-    print("SVD COMPLETE")
-    print("SVD COMPLETE")
-    print("SVD COMPLETE")
-    # print(u_k.shape)
-    # print(s_k.shape)
-    # print(v_k.shape)
-
     d_k = np.dot(s_k, v_k)
-
-    # print(d_k)
-    # print(s_k)
     s_k_inv = lg.inv(s_k)
-    print("S_k INVERSION COMPLETE")
-    test = True
+
+    test = False
     if test:
         print("double test if inverse S^-1 works")
         print(np.allclose(np.dot(s_k, s_k_inv), np.eye(s_k.shape[0])))
         print(np.allclose(np.dot(s_k_inv, s_k), np.eye(s_k.shape[0])))
         print("S_k INVERSION TEST COMPLETE")
 
+    save_matrix = False
     if save_matrix:
         u_k_file = open("U_k", "wb")
         np.save(u_k_file, u_k)
@@ -116,4 +70,3 @@ def svd(matrix, approx=10):
             "V": v_k,
             "D": d_k,
             "S_inv": s_k_inv}
-    # TODO: Save approximated values, they should be calculated only once and recalculated if needed.

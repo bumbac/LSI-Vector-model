@@ -31,6 +31,6 @@ if __name__ == '__main__':
             document = docterm_list[doc_number]
             filename = path + document['n']
             print('document:', doc_number, '||', filename, document['i'])
-            f = open(filename)
+            # f = open(filename)
             print("SIMILARITY:", similarity_ranking)
             # print(f.read())

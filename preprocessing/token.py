@@ -2,7 +2,7 @@ import os
 from hashlib import sha256
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer, LancasterStemmer, SnowballStemmer
+from nltk.stem import PorterStemmer
 from vector.vector import make_docterm_vector
 
 
@@ -47,7 +47,7 @@ def create_space(path, max_articles=10):
         docterm_list.append(docterm)
         doc_id += 1
 
-    print("\n\n\nFound these articles:", *found_articles, sep=', ')
+    print("Found these articles:", *found_articles, sep=', ')
     return docterm_list
 
 
