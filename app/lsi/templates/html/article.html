@@ -1,0 +1,70 @@
+{% include "html/header.html" %}
+
+<title>Home</title>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/lsi/home/">CNN Articles</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/lsi/home/">Home</a>
+                </li>
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link" href="#">Features</a>-->
+                <!--                </li>-->
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link" href="#">Pricing</a>-->
+                <!--                </li>-->
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <h1>{{ page_obj.title }}</h1>
+    <p style="text-align: justify">{{ page_obj.content }}</p>
+</div>
+
+<div class="container">
+    <table class="table table-bordered">
+        <thead class="text-center">
+        <tr class="table-primary">
+            <th>#</th>
+            <th>Article</th>
+            <th>Simirality</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        <tr>
+            <td>1.</td>
+            <td>Article</td>
+            <td>1.70</td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>Article</td>
+            <td>1.31</td>
+        </tr>
+        <tr>
+            <td>3.</td>
+            <td>Article</td>
+            <td>1.26</td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>Article</td>
+            <td>0.7</td>
+        </tr>
+
+
+        </tbody>
+    </table>
+</div>
+
+{% include "html/footer.html" %}
