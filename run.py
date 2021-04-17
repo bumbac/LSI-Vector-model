@@ -7,9 +7,9 @@ from LSI import lsi
 from app import console
 
 if __name__ == '__main__':
-    path = 'articles/'
+    path = 'articles/tmp/'
 
-    max_articles = 50
+    max_articles = 100
     docterm_list = tk.create_space(path, max_articles=max_articles)
     terms, matrix = vector.create_matrix(docterm_list)
     matrices_dict = lsi.svd(matrix)
