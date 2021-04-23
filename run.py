@@ -19,7 +19,7 @@ if __name__ == '__main__':
         doc_filenames[docterm['i']] = docterm['n']
     matrices_dict["doc_filenames"] = doc_filenames
 
-    matrices_dict["docterm_list"] = docterm_list;
+    matrices_dict["docterm_list"] = docterm_list
     # Save matrices_dict to file
     filehandler = open('file.dat', 'wb')
     pickle.dump(matrices_dict, filehandler)

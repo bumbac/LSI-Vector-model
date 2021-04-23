@@ -116,6 +116,6 @@ def article(request, article_id):
         title = obj.splitlines()[0].replace("Title:", "")
         title = textwrap.shorten(title, width=75, placeholder="...")
 
-        sim_articles.append(Article(article_id, title, None , similarity_ranking))
+        sim_articles.append(Article(article_id, title, None, similarity_ranking))
 
     return render(request, 'html/article.html', {'page_obj': article, 'sim_articles' : sim_articles})
