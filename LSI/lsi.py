@@ -29,7 +29,7 @@ def svd_approximate(matrix, approx):
     return _u, sigma, _v
 
 
-def svd(matrix, approx=10):
+def svd(matrix, approx=7):
     """
         Saves computed and decomposed values for further usage.
         :param matrix: term-by-document matrix

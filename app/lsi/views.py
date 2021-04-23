@@ -1,3 +1,4 @@
+import pickle
 import textwrap
 import glob
 
@@ -5,6 +6,7 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 
+from .models import *
 
 def index(request):
     """
@@ -12,16 +14,6 @@ def index(request):
     :param request: django request
     """
     return redirect('home')
-
-
-class Article:
-    """
-    Class representing article
-    """
-    def __init__(self, num, title, content):
-        self.num = num
-        self.title = title
-        self.content = content
 
 
 def home(request):
@@ -45,8 +37,7 @@ def home(request):
 
         # Extracts article id from its name
         path = f.rsplit('/', 1)[-1]
-        article_id = path.replace("article", "")
-        article_id = article_id.replace(".txt", "")
+        article_id = get_article_id(path)
 
         # Extracts article title from array and removes unnecessary string
         title = split_content[0].replace("Title:", "")
@@ -61,7 +52,7 @@ def home(request):
         content = textwrap.shorten(content, width=100, placeholder="...")
 
         # Creates article and adds it to the array
-        article = Article(article_id, title, content)
+        article = Article(article_id, title, content, None)
         articles.append(article)
 
     # Paginator for showing 9 articles per page
@@ -94,6 +85,37 @@ def article(request, article_id):
     content = content.replace("(CNN) ", "")
 
     # Creates article object
-    article = Article(article_id, title, content)
+    article = Article(article_id, title, content, None)
 
-    return render(request, 'html/article.html', {'page_obj': article})
+    filename = file[0].rsplit('/', 1)[-1]
+    with open(settings.BASE_URL + 'file.dat', 'rb') as handle:
+        data = handle.read()
+
+    matrices_dict = pickle.loads(data)
+    # print(matrices_dict['Terms'])
+
+    doc_filenames = matrices_dict['doc_filenames']
+    docterm_list = matrices_dict['docterm_list']
+    article_tuple = find_file(doc_filenames, filename)
+    top = func(matrices_dict, article_tuple)
+
+    sim_articles = []
+
+    for doc_sim_tuple in top:
+        doc_number = doc_sim_tuple[0]
+        similarity_ranking = doc_sim_tuple[1]
+        document = docterm_list[doc_number]
+        article_id = get_article_id(document['n'])
+
+        file = glob.glob(settings.ARTICLE_URL + "/article" + article_id + ".txt")
+
+        # Reads content from file
+        open_file = open(file[0], 'r')
+        obj = open_file.read()
+        open_file.close()
+        title = obj.splitlines()[0].replace("Title:", "")
+        title = textwrap.shorten(title, width=75, placeholder="...")
+
+        sim_articles.append(Article(article_id, title, None , similarity_ranking))
+
+    return render(request, 'html/article.html', {'page_obj': article, 'sim_articles' : sim_articles})

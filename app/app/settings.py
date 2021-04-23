@@ -116,4 +116,5 @@ USE_TZ = True
 STATIC_URL = 'lsi/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR,  'static')
 
-ARTICLE_URL = '../articles/'
+ARTICLE_URL = '../newarticles/'
+BASE_URL = '../'
