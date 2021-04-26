@@ -1,25 +1,37 @@
 import newspaper
 from newspaper import Article
 
+
+
+
 #A new article from TOI
-url = 'https://edition.cnn.com'
-#For different language newspaper refer above table
-toi_articl = newspaper.build(url, memoize_articles=False, language="en") # en for English
-
+filepath = 'app/app/matej/2/'
+page_name = "garden"
 i = 0
-for article in toi_articl.articles:
-    article.download()
-    article.parse()
-    # print(filename)
-    file = open("article"+str(i)+".txt", "w")
-    file.write("Title: "+article.title)
-    file.write("\n\n")
+i_max = 200
+preventive = 9999999999999999999999999999999999
+for page_n in range(2, 20):
+# for page_n in range(0, 1):
+    url = "https://veggiegardeningtips.com/all-articles/page/" + str(page_n)
+    toi_articl = newspaper.build(url, memoize_articles=False, language="en")  # en for English
+    k = 0
+    for article in toi_articl.articles:
+        k += 1
+        article.download()
+        article.parse()
+        # print(filename)
+        file = open(filepath + page_name + str(i)+".txt", "w")
+        file.write("Title: "+article.title)
+        file.write("\n\n")
 
-    text = article.text
-    text = text.replace("\n\n", " ")
-    file.write("Text: "+text)
-    file.close()
-    i = i + 1
+        text = article.text
+        text = text.replace("\n\n", " ")
+        file.write("Text: "+text)
+        file.close()
+        i = i + 1
+        print(i, '/', len(toi_articl.articles), article.title)
+        if k > preventive or i > i_max:
+            break
 
 
 
