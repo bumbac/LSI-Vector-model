@@ -46,7 +46,7 @@
         {% for article in sim_articles %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a href="/lsi/article/{{ article.num }}">{{ article.title }}</a></td>
+            <td><a href="/lsi/article/{{ article.art_id }}">{{ article.title }}</a></td>
             <td>{{ article.sim }}</td>
         </tr>
         {% endfor %}
