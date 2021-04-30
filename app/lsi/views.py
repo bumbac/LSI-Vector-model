@@ -25,7 +25,7 @@ def home(request):
     """
 
     # Load all articles from folder
-    files = glob.glob(settings.ARTICLE_URL + "/*")
+    files = glob.glob(settings.ARTICLE_URL + "*")
     # Array for articles
     articles = []
 
@@ -71,7 +71,7 @@ def article(request, article_id):
     :return: article: object that contains title and content.
     """
     # Finds article with id
-    file = glob.glob(settings.ARTICLE_URL + "/" + str(article_id) + ".txt")
+    file = glob.glob(settings.ARTICLE_URL + str(article_id) + ".txt")
 
     # Reads content from file
     open_file = open(file[0], 'r')
@@ -106,7 +106,7 @@ def article(request, article_id):
         document = docterm_list[doc_number]
         article_id = get_article_id(document['n'])
 
-        file = glob.glob(settings.ARTICLE_URL + "/" + article_id + ".txt")
+        file = glob.glob(settings.ARTICLE_URL + article_id + ".txt")
 
         # Reads content from file
         open_file = open(file[0], 'r')
