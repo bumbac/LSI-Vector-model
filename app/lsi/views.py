@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 
 from .models import *
 
+
 def index(request):
     """
     Default view, when loaded, redirects to home view.
@@ -24,8 +25,8 @@ def home(request):
     """
 
     # Load all articles from folder
-    files = glob.glob(settings.ARTICLE_URL + "/article*")
-    # Array for aricles
+    files = glob.glob(settings.ARTICLE_URL + "*")
+    # Array for articles
     articles = []
 
     # For every file creates article object which contains title and content
@@ -50,7 +51,6 @@ def home(request):
 
         # Trims content for shore content preview
         content = textwrap.shorten(content, width=100, placeholder="...")
-
         # Creates article and adds it to the array
         article = Article(article_id, title, content, None)
         articles.append(article)
@@ -71,7 +71,7 @@ def article(request, article_id):
     :return: article: object that contains title and content.
     """
     # Finds article with id
-    file = glob.glob(settings.ARTICLE_URL + "/article" + str(article_id) + ".txt")
+    file = glob.glob(settings.ARTICLE_URL + str(article_id) + ".txt")
 
     # Reads content from file
     open_file = open(file[0], 'r')
@@ -92,7 +92,6 @@ def article(request, article_id):
         data = handle.read()
 
     matrices_dict = pickle.loads(data)
-    # print(matrices_dict['Terms'])
 
     doc_filenames = matrices_dict['doc_filenames']
     docterm_list = matrices_dict['docterm_list']
@@ -107,7 +106,7 @@ def article(request, article_id):
         document = docterm_list[doc_number]
         article_id = get_article_id(document['n'])
 
-        file = glob.glob(settings.ARTICLE_URL + "/article" + article_id + ".txt")
+        file = glob.glob(settings.ARTICLE_URL + article_id + ".txt")
 
         # Reads content from file
         open_file = open(file[0], 'r')
