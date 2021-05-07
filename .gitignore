@@ -5,3 +5,5 @@ data
 .DS_Store
 .idea/
 **/*.png
+articles
+file.dat
