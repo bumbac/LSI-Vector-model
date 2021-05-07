@@ -1,20 +1,21 @@
 import numpy as np
 from numpy.linalg import norm
 
+
 class Article:
     """
     Class representing article
     """
-    def __init__(self, num, title, content, sim):
-        self.num = num
+
+    def __init__(self, art_id, title, content, sim):
+        self.art_id = art_id
         self.title = title
         self.content = content
         self.sim = sim
 
 
-def get_article_id( file_name):
-    article_id = file_name.replace("article", "")
-    article_id = article_id.replace(".txt", "")
+def get_article_id(file_name):
+    article_id = file_name.replace(".txt", "")
     return article_id
 
 

@@ -6,7 +6,7 @@ from LSI import lsi
 from app import console
 
 if __name__ == '__main__':
-    path = 'newarticles/'
+    path = 'articles/tmp4/'
 
     max_articles = 50
     docterm_list = tk.create_space(path, max_articles=max_articles)
