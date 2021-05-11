@@ -5,13 +5,11 @@ from vector import vector
 from LSI import lsi
 from app import console
 
-if __name__ == '__main__':
-    path = 'articles/tmp4/'
-
-    max_articles = 50
+def create_index(article_filepath='articles/SUMMARY/', max_articles=50, approx=30):
+    path = article_filepath
     docterm_list = tk.create_space(path, max_articles=max_articles)
     terms, matrix = vector.create_matrix(docterm_list)
-    matrices_dict = lsi.svd(matrix)
+    matrices_dict = lsi.svd(matrix, approx)
     matrices_dict["Terms"] = terms
     # dictionary of doc_number: document filename
     doc_filenames = {}
@@ -25,6 +23,11 @@ if __name__ == '__main__':
     pickle.dump(matrices_dict, filehandler)
     filehandler.close()
 
+
+if __name__ == '__main__':
+    filepath = 'articles/tmp4/'
+    max_articles = 50
+    create_index(filepath, max_articles=max_articles)
     flag = False
     while flag:
         top = console.start(matrices_dict)
