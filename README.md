@@ -6,7 +6,7 @@ Course **BI-VWM**, summer **2021**
 
 ## Introduction
 
-In this project @sutymate and @makaradam focused on creating a model, that finds
+In this project @sutymate and @makarada focused on creating a model, that finds
 similar articles based on article content. This model is based on LSI model, 
 also knows as latent semantic indexing model. The main idea is that articles are
 indexed by frequency and importance of various words in the articles.
