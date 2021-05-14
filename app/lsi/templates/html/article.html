@@ -38,6 +38,7 @@
         <tr class="table-primary">
             <th class="col-1">#</th>
             <th class="col-8">Article</th>
+            <th class="col-2">Category</th>
             <th class="col-4">Similarity</th>
         </tr>
         </thead>
@@ -47,6 +48,7 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td><a href="/lsi/article/{{ article.art_id }}">{{ article.title }}</a></td>
+            <td>{{ article.category }}</td>
             <td>{{ article.sim }}</td>
         </tr>
         {% endfor %}

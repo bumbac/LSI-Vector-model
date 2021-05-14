@@ -14,6 +14,7 @@ def create_space(path, max_articles=10):
     :return: list of docterm vectors
     """
     files = os.listdir(path)
+    print("Number of files: ", len(files))
     # order of documents is important for matrix (m x n_docs), does not change
     doc_id = 0
     docterm_list = []
@@ -22,30 +23,32 @@ def create_space(path, max_articles=10):
     found_articles = []
     print("TOKENIZE AND STEMMATIZE AND CLEAN WORDS in progress")
     for f in files:
+        print(doc_id, f)
         if os.path.isdir(path + f):
             continue
         else:
             found_articles.append(f)
-        if doc_id > max_articles:
+        if doc_id == max_articles+1:
             break
-        document_file = open(path + f)
-        raw_document = document_file.read()
-        # hash used for checking duplicate documents
-        doc_hash = sha256(bytearray(raw_document, encoding='utf8')).hexdigest()
-        if doc_hash in unique_doc_hashes:
-            doc_hash = sha256(bytearray(doc_hash, encoding='utf8')).hexdigest()
-            print("same hash as other document", doc_hash, path, f)
-        unique_doc_hashes.append(doc_hash)
-        tokens = tokenize(raw_document)
-        clean_tokens = remove_stops(tokens)
-        clean_words = stemmatize(clean_tokens)
-        save_path = None  # save_dir + 'm_' + f
-        # creates vector of terms with relative weight to this document
-        docterm = make_docterm_vector(clean_words, save_path,
-                                      doc_hash=str(doc_hash), doc_filename=f,
-                                      doc_id=doc_id)
-        docterm_list.append(docterm)
-        doc_id += 1
+        if f != ".DS_Store" and not os.path.isdir(path + f):
+            document_file = open(path + f)
+            raw_document = document_file.read()
+            # hash used for checking duplicate documents
+            doc_hash = sha256(bytearray(raw_document, encoding='utf8')).hexdigest()
+            if doc_hash in unique_doc_hashes:
+                doc_hash = sha256(bytearray(doc_hash, encoding='utf8')).hexdigest()
+                print("same hash as other document", doc_hash, path, f)
+            unique_doc_hashes.append(doc_hash)
+            tokens = tokenize(raw_document)
+            clean_tokens = remove_stops(tokens)
+            clean_words = stemmatize(clean_tokens)
+            save_path = None  # save_dir + 'm_' + f
+            # creates vector of terms with relative weight to this document
+            docterm = make_docterm_vector(clean_words, save_path,
+                                          doc_hash=str(doc_hash), doc_filename=f,
+                                          doc_id=doc_id)
+            docterm_list.append(docterm)
+            doc_id += 1
 
     print("Found these articles:", *found_articles, sep=', ')
     return docterm_list

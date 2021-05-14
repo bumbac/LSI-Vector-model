@@ -1,6 +1,7 @@
 import pickle
 import textwrap
 import glob
+import re
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -47,12 +48,11 @@ def home(request):
         content_pos = len(split_content) - 1
         content = split_content[content_pos]
         content = content.replace("Text: ", "")
-        content = content.replace("(CNN)", "")
 
         # Trims content for shore content preview
         content = textwrap.shorten(content, width=100, placeholder="...")
         # Creates article and adds it to the array
-        article = Article(article_id, title, content, None)
+        article = Article(article_id, None, title, content, None)
         articles.append(article)
 
     # Paginator for showing 9 articles per page
@@ -82,10 +82,9 @@ def article(request, article_id):
     # Extracts title and content and removes unnecessary strings
     title = obj_content[0].replace("Title: ", "")
     content = obj_content[2].replace("Text: ", "")
-    content = content.replace("(CNN) ", "")
 
     # Creates article object
-    article = Article(article_id, title, content, None)
+    article = Article(article_id, None, title, content, None)
 
     filename = file[0].rsplit('/', 1)[-1]
     with open(settings.BASE_URL + 'file.dat', 'rb') as handle:
@@ -93,10 +92,12 @@ def article(request, article_id):
 
     matrices_dict = pickle.loads(data)
 
+    approx = 368
+
     doc_filenames = matrices_dict['doc_filenames']
     docterm_list = matrices_dict['docterm_list']
     article_tuple = find_file(doc_filenames, filename)
-    top = func(matrices_dict, article_tuple)
+    top = func(matrices_dict, article_tuple, approx)
 
     sim_articles = []
 
@@ -106,15 +107,19 @@ def article(request, article_id):
         document = docterm_list[doc_number]
         article_id = get_article_id(document['n'])
 
-        file = glob.glob(settings.ARTICLE_URL + article_id + ".txt")
+        if article_id != article.art_id:
+            file = glob.glob(settings.ARTICLE_URL + article_id + ".txt")
 
-        # Reads content from file
-        open_file = open(file[0], 'r')
-        obj = open_file.read()
-        open_file.close()
-        title = obj.splitlines()[0].replace("Title:", "")
-        title = textwrap.shorten(title, width=75, placeholder="...")
+            # Reads content from file
+            open_file = open(file[0], 'r')
+            obj = open_file.read()
+            open_file.close()
+            title = obj.splitlines()[0].replace("Title:", "")
+            title = textwrap.shorten(title, width=75, placeholder="...")
 
-        sim_articles.append(Article(article_id, title, None, similarity_ranking))
+            # Match all digits in the string and replace them with an empty string
+            category = re.sub('[0-9_]', ' ', article_id)
+
+            sim_articles.append(Article(article_id, category, title, None, similarity_ranking))
 
     return render(request, 'html/article.html', {'page_obj': article, 'sim_articles' : sim_articles})
