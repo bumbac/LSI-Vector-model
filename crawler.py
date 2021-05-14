@@ -1,13 +1,12 @@
 import os
 import shutil
 import newspaper
-from newspaper import Article
 from preprocessing.language import is_eng
 
 
 def crawl():
     #A new article from TOI
-    filepath = 'articles/matej2/'
+    filepath = 'lsi-data/articles/matej2/'
     url = "https://fashionmagazine.com/style"
     #For different language newspaper refer above table
     toi_articl = newspaper.build(url, memoize_articles=False, language="en") # en for English
