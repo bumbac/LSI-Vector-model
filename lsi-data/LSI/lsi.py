@@ -46,12 +46,5 @@ def svd(matrix):
     d_k = np.dot(s_k, v_k)
     s_k_inv = lg.inv(s_k)
 
-    test = True
-    if test:
-        print("double test if inverse S^-1 works")
-        print(np.allclose(np.dot(s_k, s_k_inv), np.eye(s_k.shape[0])))
-        print(np.allclose(np.dot(s_k_inv, s_k), np.eye(s_k.shape[0])))
-        print("S_k INVERSION TEST COMPLETE")
-
     # return {"U": u_k, "S": s_k, "V": v_k, "D": d_k, "S_inv": s_k_inv}
     return {"V": v_k, "D": d_k, "S_inv": s_k_inv}
