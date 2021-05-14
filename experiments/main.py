@@ -5,22 +5,27 @@ import matplotlib.pylab as plt
 
 def speed_test():
     # number of articles
-    n_list = [i for i in range(20, 61, 10)]
+    n_list = [200]
     # approximation factor
-    k_list = [i for i in range(5, 25, 5)]
-    article_filepath = "/home/sutymate/School/VWM/LSI/articles/tmp4/"
+    k_list = [10, 20, 30, 40, 50]
+    print(n_list, k_list)
+    article_filepath = "../articles/tmp/"
 
     for n in n_list:
         durations = []
         for k in k_list:
-            start = time.perf_counter_ns()
+            print(n, k)
+            start = time.monotonic()
             create_index(article_filepath=article_filepath, max_articles=n, approx=k)
-            t = time.perf_counter_ns() - start
+            t = time.monotonic() - start
+            print("Duration:", t)
             durations.append(t)
+        print(durations)
         plt.plot(k_list, durations)
+        plt.xlabel("Value k")
+        plt.ylabel("Time in seconds")
         plt.title('Appr. on ' + str(n) + " articles")
         plt.show()
-
 
 
 def k_test():

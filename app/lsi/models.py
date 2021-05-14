@@ -1,5 +1,7 @@
+import numpy
 import numpy as np
 from numpy.linalg import norm
+from time import perf_counter_ns as ns
 
 
 class Article:
@@ -7,8 +9,9 @@ class Article:
     Class representing article
     """
 
-    def __init__(self, art_id, title, content, sim):
+    def __init__(self, art_id, category, title, content, sim):
         self.art_id = art_id
+        self.category = category
         self.title = title
         self.content = content
         self.sim = sim
@@ -29,7 +32,7 @@ def find_file(doc_filenames, filename):
             return item
 
 
-def func(matrices_dict, doc_tuple):
+def func(matrices_dict, doc_tuple, approx):
     """
     Finds most similar articles from calculated matrices in matrices_dict
     based on query_vector
@@ -37,31 +40,36 @@ def func(matrices_dict, doc_tuple):
     :param doc_tuple: tuple(doc_id, doc_filename)
     :return: descending list of tuples(doc_number, similarity)
     """
-    u = matrices_dict['U']
-    s = matrices_dict['S']
+    # v = np.dot(matrices_dict['S_inv'], matrices_dict['D'])
     v = matrices_dict['V']
-    d = matrices_dict['D']
+    v = v[:approx, :]
+    print("v shape: ", v.shape)
+
     doc_id = doc_tuple[0]
+    print("doc_tuple[0]", doc_tuple[0])
     q_t = v[:, doc_id]
     # dict(doc_id, similarity)
     ranking_of_documents = {}
+    print("v[:, doc_id]", v[:, doc_id])
     # iterate all columns = documents in concept space (V)
+    start = ns()
     for d_ in range(v.shape[1]):
+        # print("document = ", v[:, d_])
         document = v[:, d_]
-        if d_ == doc_id:
-            # ranking should be == 1
-            ranking = similarity(q_t, document)
-            continue
         ranking = similarity(q_t, document)
         ranking_of_documents[d_] = ranking
+    end = ns() - start
+    print(end)
+    # 9 182 286
+    # 6 405 213
     # descending order of most relevant doc_ids
     sorted_doc_ids = sorted(ranking_of_documents, key=ranking_of_documents.get, reverse=True)
-    top_k = 5
+    top_k = 10
     # tuples (doc_id, similarity)
     sorted_doc_similarity = []
     for doc_id in sorted_doc_ids:
         sorted_doc_similarity.append((doc_id, ranking_of_documents[doc_id]))
-    return sorted_doc_similarity[:top_k]
+    return sorted_doc_similarity[:top_k + 1]
 
 
 def similarity(query, document):
