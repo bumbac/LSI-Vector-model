@@ -7,28 +7,41 @@ from lsi import models as lsi
 
 
 def speed_test():
-    # number of articles
-    n_list = [200]
     # approximation factor
-    k_list = [10, 20, 30, 40, 50]
-    print(n_list, k_list)
-    article_filepath = "../articles/tmp4/"
-
-    for n in n_list:
-        durations = []
+    k_list = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25]
+    files = os.listdir('../articles/tmp1/')
+    with open('../file.dat', 'rb') as handle:
+        data = handle.read()
+    matrices_dict = pickle.loads(data)
+    doc_filenames = matrices_dict['doc_filenames']
+    files_axis = []
+    files_sim_axis = []
+    for doc_id in range(5):
+        files_sim_axis.append([])
+        f = doc_filenames[doc_id]
+        doc_tuple = (doc_id, f)
+        files_axis.append(f)
+        files_time_axis = []
         for k in k_list:
-            print(n, k)
-            start = time.monotonic()
-            create_index(article_filepath=article_filepath, max_articles=n, approx=k)
-            t = time.monotonic() - start
-            print("Duration:", t)
-            durations.append(t)
-        print(durations)
-        plt.plot(k_list, durations)
-        plt.xlabel("Value k")
-        plt.ylabel("Time in seconds")
-        plt.title('Appr. on ' + str(n) + " articles")
-        plt.show()
+            top, time_duration = lsi.func(matrices_dict, doc_tuple, k)
+            files_time_axis.append(time_duration)
+            files_sim_axis[doc_id].append(top[1][1])
+        plt.plot(k_list, files_time_axis, label=f)
+        plt.title("Time of sequential and indexed search")
+        plt.xlabel('k approximation, 0 is sequential')
+        plt.ylabel('Search time in nanoseconds')
+        plt.legend()
+    plt.savefig('time_search1plus.png')
+    plt.show()
+    for f in range(len(files_axis)):
+        plt.plot(k_list, files_sim_axis[f], label=files_axis[f])
+        plt.title("Similarity of top match article with different k")
+        plt.ylabel("Similarity of top article")
+        plt.xlabel("k approximation, 0 is sequential")
+        plt.legend()
+    plt.savefig("similarity1-all.png")
+    plt.show()
+
 
 
 def k_test():
@@ -37,7 +50,7 @@ def k_test():
        of three most similar articles. For various k, plots histogram of most frequent articles on position 1, 2, 3.
        """
     # select directory with analyzed articles. Chooses one randomly, all need to be processed by LSI before
-    files = os.listdir('../articles/tmp4')
+    files = os.listdir('../articles/tmp1')
     # set how many files you want to analyze, 1-3 recommended
     for i in range(3):
         article_filename = files[i]
@@ -51,7 +64,7 @@ def k_test():
         similarity_top5 = [[] for i in range(k_articles)]
         order_articles = [[] for i in range(k_articles)]
         # set range for approximation.
-        max_approx = 490
+        max_approx = 50
         tested_values = []
         # see stepping for faster calculations
         for i in range(1, 30, 5):
@@ -61,7 +74,7 @@ def k_test():
         for approx in tested_values:
             doc_filenames = matrices_dict['doc_filenames']
             article_tuple = lsi.find_file(doc_filenames, article_filename)
-            top = lsi.func(matrices_dict, article_tuple, approx)
+            top, duration = lsi.func(matrices_dict, article_tuple, approx)
             cnt = 0
             # analyzes 0 to k_articles
             for doc_sim_tuple in top[:k_articles]:

@@ -1,7 +1,7 @@
 import numpy
 import numpy as np
 from numpy.linalg import norm
-from time import perf_counter_ns as ns
+import time
 
 
 class Article:
@@ -41,13 +41,12 @@ def func(matrices_dict, doc_tuple, approx):
     :return: descending list of tuples(doc_number, similarity)
     """
     # v = np.dot(matrices_dict['S_inv'], matrices_dict['D'])
-    sequential = True
-    if sequential:
-        v = matrices_dict['A']
-        print("v shape: ", v.shape)
-    else:
+    if approx:
         v = matrices_dict['V']
         v = v[:approx, :]
+        print("v shape: ", v.shape)
+    else:
+        v = matrices_dict['A']
         print("v shape: ", v.shape)
     doc_id = doc_tuple[0]
     print("doc_tuple[0]", doc_tuple[0])
@@ -56,30 +55,21 @@ def func(matrices_dict, doc_tuple, approx):
     ranking_of_documents = {}
     print("v[:, doc_id]", v[:, doc_id])
     # iterate all columns = documents in concept space (V)
-    start = ns()
-
+    start = time.monotonic_ns()
     for d_ in range(v.shape[1]):
         # print("document = ", v[:, d_])
         document = v[:, d_]
         ranking = similarity(q_t, document)
         ranking_of_documents[d_] = ranking
-    end = ns() - start
-    print('\t\t\t\t\t', sequential, end)
-    f = open('/home/sutymate/School/VWM/LSI/lsi-web/lsi/tst.csv', 'a')
-    f.write(str(sequential) + ',' + str(end) + ',' + str(doc_tuple[1]) + '\n')
-    f.close()
-    # 9 182 286
-    # 6 405 213
-    # 5 270 626
-    # 7 302448
-    # descending order of most relevant doc_ids
+    end = time.monotonic_ns() - start
+
     sorted_doc_ids = sorted(ranking_of_documents, key=ranking_of_documents.get, reverse=True)
     top_k = 10
     # tuples (doc_id, similarity)
     sorted_doc_similarity = []
     for doc_id in sorted_doc_ids:
         sorted_doc_similarity.append((doc_id, ranking_of_documents[doc_id]))
-    return sorted_doc_similarity[:top_k + 1]
+    return sorted_doc_similarity[:top_k + 1], end
 
 
 def similarity(query, document):

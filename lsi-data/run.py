@@ -1,6 +1,6 @@
 import pickle
 import time
-
+import os
 from preprocessing import token as tk
 from vector import vector
 from LSI import lsi
@@ -8,8 +8,8 @@ from LSI import lsi
 
 if __name__ == '__main__':
 
-    filepath = 'lsi-data/articles/tmp2/'
-    max_articles = 368
+    filepath = 'articles/tmp1/'
+    max_articles = 0
     # create_index(filepath, max_articles=max_articles)
     start = time.monotonic()
     docterm_list = tk.create_space(filepath, max_articles=max_articles)
@@ -29,5 +29,5 @@ if __name__ == '__main__':
     filehandler.close()
 
     res = time.monotonic() - start
-    print("Time:", res)
+    print("Time in nanosec:", res)
 

@@ -92,7 +92,7 @@ def article(request, article_id):
 
     matrices_dict = pickle.loads(data)
 
-    approx = 50
+    approx = 10
 
     doc_filenames = matrices_dict['doc_filenames']
     docterm_list = matrices_dict['docterm_list']
