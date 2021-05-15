@@ -1,0 +1,60 @@
+{% include "html/header.html" %}
+
+<title>{{ page_obj.title }}</title>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/lsi/home/">LSI Vector Model App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/lsi/home/">Home</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <h1>{{ page_obj.title }}</h1>
+    <p>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample">
+            Toggle article
+        </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <p style="text-align: justify">{{ page_obj.content }}</p>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-bordered">
+        <thead class="text-center">
+        <tr class="table-primary">
+            <th class="col-1">#</th>
+            <th class="col-8">Article</th>
+            <th class="col-2">Category</th>
+            <th class="col-4">Similarity</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+
+        {% for article in sim_articles %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="/lsi/article/{{ article.art_id }}">{{ article.title }}</a></td>
+            <td>{{ article.category }}</td>
+            <td>{{ article.sim }}</td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% include "html/footer.html" %}

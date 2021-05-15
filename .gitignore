@@ -5,6 +5,6 @@ data
 .DS_Store
 .idea/
 **/*.png
-articles
+lsi-data/articles
 file.dat
-articles/*
+lsi-data/articles/*
