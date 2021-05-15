@@ -24,11 +24,13 @@ def create_space(path, max_articles=10):
     print("TOKENIZE AND STEMMATIZE AND CLEAN WORDS in progress")
     for f in files:
         print(doc_id, f)
+        if f.find('txt') == -1:
+            continue
         if os.path.isdir(path + f):
             continue
         else:
             found_articles.append(f)
-        if doc_id == max_articles+1:
+        if doc_id == max_articles and max_articles != 0:
             break
         if f != ".DS_Store" and not os.path.isdir(path + f):
             document_file = open(path + f)
