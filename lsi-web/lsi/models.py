@@ -41,10 +41,14 @@ def func(matrices_dict, doc_tuple, approx):
     :return: descending list of tuples(doc_number, similarity)
     """
     # v = np.dot(matrices_dict['S_inv'], matrices_dict['D'])
-    v = matrices_dict['V']
-    v = v[:approx, :]
-    print("v shape: ", v.shape)
-
+    sequential = True
+    if sequential:
+        v = matrices_dict['A']
+        print("v shape: ", v.shape)
+    else:
+        v = matrices_dict['V']
+        v = v[:approx, :]
+        print("v shape: ", v.shape)
     doc_id = doc_tuple[0]
     print("doc_tuple[0]", doc_tuple[0])
     q_t = v[:, doc_id]
@@ -53,13 +57,17 @@ def func(matrices_dict, doc_tuple, approx):
     print("v[:, doc_id]", v[:, doc_id])
     # iterate all columns = documents in concept space (V)
     start = ns()
+
     for d_ in range(v.shape[1]):
         # print("document = ", v[:, d_])
         document = v[:, d_]
         ranking = similarity(q_t, document)
         ranking_of_documents[d_] = ranking
     end = ns() - start
-    print(end)
+    print('\t\t\t\t\t', sequential, end)
+    f = open('/home/sutymate/School/VWM/LSI/lsi-web/lsi/tst.csv', 'a')
+    f.write(str(sequential) + ',' + str(end) + ',' + str(doc_tuple[1]) + '\n')
+    f.close()
     # 9 182 286
     # 6 405 213
     # 5 270 626

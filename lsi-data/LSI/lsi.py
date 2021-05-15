@@ -47,4 +47,4 @@ def svd(matrix):
     s_k_inv = lg.inv(s_k)
 
     # return {"U": u_k, "S": s_k, "V": v_k, "D": d_k, "S_inv": s_k_inv}
-    return {"V": v_k, "D": d_k, "S_inv": s_k_inv}
+    return {"A": matrix, "V": v_k, "D": d_k, "S_inv": s_k_inv}
