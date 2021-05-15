@@ -113,8 +113,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+""" Important variables: 
+If something does not load, here you can specify paths.
+"""
+
+"""
+Variable used for loading static files like styles and pictures
+"""
 STATIC_URL = 'lsi/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR,  'static')
 
-ARTICLE_URL = 'articles/tmp4/'
+"""
+Variable used for specifying relative path to the folder with articles
+"""
+ARTICLE_URL = 'articles/tmp2/'
+
+"""
+Variable used for specifying root path of the project
+"""
 BASE_URL = ''
