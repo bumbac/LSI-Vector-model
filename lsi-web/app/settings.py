@@ -126,9 +126,9 @@ STATIC_URL = 'lsi/static/'
 """
 Variable used for specifying relative path to the folder with articles
 """
-ARTICLE_URL = "/home/sutymate/School/VWM/LSI/lsi-data/articles/tmp3/"
+ARTICLE_URL = "../lsi-data/articles/tmp1/"
 
 """
 Variable used for specifying root path of the project
 """
-BASE_URL = '/home/sutymate/School/VWM/LSI/lsi-data/'
+BASE_URL = '../lsi-data/'
