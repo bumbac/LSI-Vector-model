@@ -97,7 +97,7 @@ def article(request, article_id):
     doc_filenames = matrices_dict['doc_filenames']
     docterm_list = matrices_dict['docterm_list']
     article_tuple = find_file(doc_filenames, filename)
-    top = func(matrices_dict, article_tuple, approx)
+    top, time_duration = func(matrices_dict, article_tuple, approx)
 
     sim_articles = []
 
